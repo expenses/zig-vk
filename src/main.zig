@@ -3,13 +3,9 @@ const vk = @cImport(@cInclude("vulkan/vulkan.h"));
 
 usingnamespace vk;
 
-const Gpa = std.heap.GeneralPurposeAllocator(.{});
+const alloc = std.heap.c_allocator;
 
 pub fn main() !void {
-    var gpa = Gpa{};
-    var alloc = &gpa.allocator;
-    defer _ = gpa.deinit();
-
     const application_info = std.mem.zeroInit(VkApplicationInfo, .{
         .sType = VkStructureType.VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pApplicationName = "zig-vk",
@@ -55,7 +51,6 @@ pub fn main() !void {
         vkGetPhysicalDeviceProperties(device, @ptrCast([*c]VkPhysicalDeviceProperties, &properties));
         std.debug.print("{}\n", .{properties});
     }
-
 }
 
 fn handle_vk_error(result: VkResult) !void {
